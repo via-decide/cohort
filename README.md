@@ -1,89 +1,83 @@
-# Alchemist Series — Remotion Pipeline
+# Branching Documentary Remotion Project
 
-## Quick Start
+This project renders branching documentary episodes from `production.json` using a **single** Remotion composition: `EpisodeFromJson`.
+
+## Run
 
 ```bash
-tar -xzf alchemist-remotion.tar.gz
-cd alchemist-remotion
 npm install
-
-# Open Remotion Studio (preview all 10 episodes)
 npm run start
-
-# Render a single episode
 ts-node --esm render.ts V01
-
-# Render specific episodes
-ts-node --esm render.ts V01 V03 V08
-
-# Render all 10 episodes
-ts-node --esm render.ts --all
-
-# List available IDs
-ts-node --esm render.ts --list
 ```
 
-## Project Structure
+## CLI
 
+```bash
+# list ids
+npm run render:list
+
+# render one
+npm run render -- V01
+
+# render many
+npm run render -- V01 V03 V08
+
+# render all
+npm run render:all
 ```
-alchemist-remotion/
-├── production.json          ← Source of truth (branching map, scripts, overlays)
-├── render.ts                ← CLI renderer (bundle once, render N videos)
+
+## Validation
+
+```bash
+npm run validate
+```
+
+Checks:
+- video ids are unique
+- branch targets exist
+- `total_duration_frames = fps * duration_seconds`
+- scene duration sum equals `total_duration_frames`
+
+## Folder structure
+
+```text
+.
+├── production.json
+├── render.ts
+├── scripts/
+│   └── validate-production.ts
 ├── src/
-│   ├── index.ts             ← registerRoot entry point
-│   ├── Root.tsx             ← One Composition per video (V01–V10)
-│   ├── VideoFromJson.tsx    ← Scene dispatcher — reads production.json
-│   ├── types.ts             ← Full TypeScript interface matching JSON schema
-│   ├── theme.ts             ← Brand palette, style map, position map
+│   ├── index.ts
+│   ├── Root.tsx
+│   ├── EpisodeFromJson.tsx
+│   ├── types.ts
+│   ├── data/load-production.ts
 │   ├── components/
-│   │   ├── Background.tsx   ← Dark gradient base + grain overlay
-│   │   ├── OptionCard.tsx   ← Spring-animated decision card (A/B/C/D)
-│   │   └── Wordmark.tsx     ← Series wordmark + repo tag
-│   ├── scenes/
-│   │   ├── IntroScene.tsx   ← Card flip entrance animation
-│   │   ├── TalkingHeadScene.tsx  ← Founder camera placeholder + overlays
-│   │   ├── StoryScene.tsx   ← Mixed narration / b-roll / three-beat text
-│   │   ├── RepoScene.tsx    ← Animated highlight boxes over code block
-│   │   ├── DiagramScene.tsx ← SVG path-draw architecture diagram
-│   │   ├── DecisionScene.tsx ← The branching decision UI (hero scene)
-│   │   └── OutroScene.tsx   ← Branch previews + subscribe CTA
-│   └── utils/
-│       ├── overlay.tsx      ← Resolves text_overlays from JSON → positioned elements
-│       └── springs.ts       ← useSpring / useFadeIn helpers
-└── renders/                 ← Output directory (created on first render)
+│   │   ├── SceneFrame.tsx
+│   │   └── TextOverlays.tsx
+│   └── scenes/
+│       ├── IntroAnimationScene.tsx
+│       ├── TalkingExplanationScene.tsx
+│       ├── StoryScene.tsx
+│       ├── RepoScreenCaptureScene.tsx
+│       ├── DiagramAnimationScene.tsx
+│       ├── DecisionOverlayScene.tsx
+│       └── OutroScene.tsx
+└── public/
+    ├── screenshots/
+    ├── diagrams/
+    └── footage/
 ```
 
-## How the JSON drives the video
+## Scene types supported
 
-Every scene in `production.json` has:
-- `type` → mapped to a scene component in `VideoFromJson.tsx`
-- `start_frame` → Sequence `from` prop (absolute frame offset)
-- `duration_frames` → Sequence `durationInFrames`
-- `text_overlays[]` → Each has `{text, style, position, appear_frame}`
-  - `style` is looked up in `theme.ts → STYLES`
-  - `position` is looked up in `theme.ts → POSITIONS`
-  - `appear_frame` is the absolute video frame when it fades in
+- `intro_animation`
+- `talking_explanation`
+- `story_scene`
+- `repo_screen_capture`
+- `diagram_animation`
+- `decision_overlay`
+- `outro`
 
-## Adding real footage
-
-Replace the talking-head placeholder in `TalkingHeadScene.tsx`:
-
-```tsx
-// Replace the placeholder div with:
-import { Video } from "remotion";
-<Video src={staticFile(`footage/${video.id}_hook.mp4`)} />
-```
-
-Drop your OBS recordings in `public/footage/` named `V01_hook.mp4` etc.
-
-## Branching map (routing table for web player)
-
-```js
-const ROUTES = production.branching_map.edges;
-// On option select:
-const nextId = ROUTES[currentVideoId][selectedOption]; // "V01" + "A" → "V02"
-```
-
-## Frame math (verified)
-- 30 fps × 240 seconds = **7200 frames** per video
-- Scene budget: INTRO(90) + HOOK(600) + STORY(1800) + REPO(1500) + DIAGRAM(1200) + DECISION(1200) + OUTRO(810) = 7200 ✓
+> Legacy types in the current JSON are normalized internally:
+> `talking_head`, `mixed_narration_broll`, `screen_capture_annotated`, `animated_diagram`.
