@@ -11,7 +11,7 @@ const { width, height } = parseResolution(defaultVideo.remotion_spec.resolution)
 
 export const RemotionRoot: React.FC = () => {
   return (
-    <Composition<EpisodeInputProps>
+    <Composition
       id="EpisodeFromJson"
       component={EpisodeFromJson}
       width={width}
