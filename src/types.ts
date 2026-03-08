@@ -78,13 +78,26 @@ export interface DecisionPoint {
   options: DecisionOption[];
 }
 
+
+
+export interface FullScript {
+  hook?: string;
+  context?: string;
+  repo_explanation?: string;
+  decision_moment?: string;
+  options_narration?: string;
+  outro?: string;
+}
+
 export interface VideoDefinition {
   id: string;
   title: string;
   duration_seconds: number;
   decision_point: DecisionPoint;
   remotion_spec: RemotionSpec;
+  full_script?: FullScript;
 }
+
 
 export interface BranchingMap {
   nodes?: string[];
