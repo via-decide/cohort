@@ -4,61 +4,38 @@ import { bundle } from "@remotion/bundler";
 import { renderMedia, selectComposition } from "@remotion/renderer";
 import type { ProductionData } from "./src/types";
 
-const productionPath = path.join(process.cwd(), "production.json");
-const production = JSON.parse(fs.readFileSync(productionPath, "utf-8")) as ProductionData;
-const allIds = production.videos.map((video) => video.id);
-const compositionId = "EpisodeFromJson";
-
+const production = JSON.parse(fs.readFileSync(path.join(process.cwd(), "production-v2.json"), "utf8")) as ProductionData;
+const ids = production.videos.map((v) => v.id);
 const args = process.argv.slice(2);
-const wantsList = args.includes("--list");
-const wantsAll = args.includes("--all");
 
-if (wantsList) {
-  console.log(allIds.join("\n"));
+if (args.includes("--list")) {
+  console.log(ids.join("\n"));
   process.exit(0);
 }
 
-const requestedIds = wantsAll ? allIds : args.filter((arg) => !arg.startsWith("--"));
-
-if (requestedIds.length === 0) {
-  console.error("Usage: ts-node --esm render.ts <id...> | --all | --list");
-  process.exit(1);
-}
-
-const invalidIds = requestedIds.filter((id) => !allIds.includes(id));
-if (invalidIds.length > 0) {
-  console.error(`Unknown video id(s): ${invalidIds.join(", ")}`);
-  console.error(`Valid ids: ${allIds.join(", ")}`);
+const wanted = args.includes("--all") ? ids : args.filter((a) => !a.startsWith("--"));
+if (wanted.length === 0) {
+  console.error("Usage: ts-node --esm render.ts --list | --all | <ids>");
   process.exit(1);
 }
 
 const run = async () => {
-  const entry = path.join(process.cwd(), "src", "index.ts");
-  const outDir = path.join(process.cwd(), "renders");
-  fs.mkdirSync(outDir, { recursive: true });
+  const bundleLocation = await bundle({ entryPoint: path.join(process.cwd(), "src/index.ts") });
+  fs.mkdirSync("renders", { recursive: true });
 
-  console.log("Bundling Remotion project...");
-  const bundleLocation = await bundle({
-    entryPoint: entry,
-    webpackOverride: (config) => config,
-  });
-
-  for (const id of requestedIds) {
+  for (const id of wanted) {
     const composition = await selectComposition({
       serveUrl: bundleLocation,
-      id: compositionId,
-      inputProps: { videoId: id },
+      id: "EpisodeFromJson",
+      inputProps: { videoId: id, voEnabled: false },
     });
-
-    const outputLocation = path.join(outDir, `${id}.mp4`);
-    console.log(`Rendering ${id} -> ${outputLocation}`);
 
     await renderMedia({
       composition,
       serveUrl: bundleLocation,
       codec: "h264",
-      outputLocation,
-      inputProps: { videoId: id },
+      outputLocation: path.join(process.cwd(), "renders", `${id}.mp4`),
+      inputProps: { videoId: id, voEnabled: false },
     });
   }
 };
