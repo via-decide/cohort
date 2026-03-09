@@ -1,29 +1,3 @@
-export type OverlayStyle =
-  | "title"
-  | "subtitle"
-  | "body"
-  | "code_label"
-  | "decision_prompt"
-  | "option_label"
-  | "cta"
-  | string;
-
-export type OverlayPosition =
-  | "center"
-  | "top_left"
-  | "top_right"
-  | "bottom_left"
-  | "bottom_right"
-  | "lower_third"
-  | string;
-
-export interface TextOverlay {
-  text: string;
-  style: OverlayStyle;
-  position: OverlayPosition;
-  appear_frame: number;
-}
-
 export type SceneType =
   | "intro_animation"
   | "talking_explanation"
@@ -33,86 +7,79 @@ export type SceneType =
   | "decision_overlay"
   | "outro";
 
-export type LegacySceneType =
-  | "talking_head"
-  | "mixed_narration_broll"
-  | "screen_capture_annotated"
-  | "animated_diagram";
-
-export type AnySceneType = SceneType | LegacySceneType;
-
-export interface BaseScene {
-  id: string;
-  type: AnySceneType;
-  start_frame: number;
-  duration_frames: number;
-  description: string;
-  text_overlays: TextOverlay[];
-  transition?: string;
+export interface TextOverlay {
+  text: string;
+  style: string;
+  position: string;
+  appear_frame: number;
 }
 
-export type Resolution =
-  | string
-  | {
-      width: number;
-      height: number;
-    };
-
-export interface RemotionSpec {
-  resolution: Resolution;
-  fps: number;
-  duration_seconds: number;
-  total_duration_frames: number;
-  scenes: BaseScene[];
+export interface Scene {
+  id: string;
+  type: SceneType;
+  start_frame: number;
+  duration_frames: number;
+  description?: string;
+  text_overlays?: TextOverlay[];
+  transition?: string;
 }
 
 export interface DecisionOption {
   id: string;
   label: string;
-  description: string;
+  description?: string;
   leads_to: string;
 }
 
-export interface DecisionPoint {
-  question: string;
-  options: DecisionOption[];
+export interface YoutubeMeta {
+  title: string;
+  description: string;
+  tags: string[];
+  thumbnail_concept?: string;
 }
 
-
-
-export interface FullScript {
-  hook?: string;
-  context?: string;
-  repo_explanation?: string;
-  decision_moment?: string;
-  options_narration?: string;
-  outro?: string;
+export interface VideoVisuals {
+  github_repos?: string[];
 }
 
 export interface VideoDefinition {
   id: string;
   title: string;
-  duration_seconds: number;
-  decision_point: DecisionPoint;
-  remotion_spec: RemotionSpec;
-  full_script?: FullScript;
-}
-
-
-export interface BranchingMap {
-  nodes?: string[];
-  edges: Record<string, Record<string, string> | "TERMINAL">;
+  parent_id?: string | null;
+  branch_from_option?: string | null;
+  concept?: string;
+  repo_stage?: string;
+  notebookllm_prompt?: string;
+  youtube?: YoutubeMeta;
+  visuals?: VideoVisuals;
+  full_script?: Record<string, string>;
+  creator_script?: Record<string, string>;
+  decision_point?: {
+    question: string;
+    options: DecisionOption[];
+  };
+  leads_to?: string[];
+  remotion_spec: {
+    fps: number;
+    total_duration_frames: number;
+    scenes: Scene[];
+  };
 }
 
 export interface ProductionData {
   series: {
     id: string;
     title: string;
+    fps: number;
+    frames_per_video: number;
   };
   videos: VideoDefinition[];
-  branching_map: BranchingMap;
+  branching_map?: {
+    edges: Record<string, Record<string, string> | "TERMINAL">;
+  };
 }
 
-export interface EpisodeInputProps {
+export interface EpisodeProps {
   videoId: string;
+  voEnabled?: boolean;
 }

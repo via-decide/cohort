@@ -1,38 +1,39 @@
 import React from "react";
 import { Composition } from "remotion";
 import { EpisodeFromJson } from "./EpisodeFromJson";
-import { getProduction } from "./data/load-production";
-import { parseResolution } from "./utils/resolution";
+import type { ProductionData } from "./types";
 
-const production = getProduction();
+const mode = (process.env.PRODUCTION_MODE ?? "v2").toLowerCase();
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const production = require(mode === "v1" ? "../production.json" : "../production-v2.json") as unknown as ProductionData;
+
+const FPS = production.series.fps;
+const DURATION = production.series.frames_per_video;
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
-      {production.videos.map((video) => {
-        const { width, height } = parseResolution(video.remotion_spec.resolution);
-        return (
-          <Composition
-            key={video.id}
-            id={video.id}
-            component={EpisodeFromJson}
-            width={width}
-            height={height}
-            fps={video.remotion_spec.fps}
-            durationInFrames={video.remotion_spec.total_duration_frames}
-            defaultProps={{ videoId: video.id }}
-          />
-        );
-      })}
+      {production.videos.map((video) => (
+        <Composition
+          key={video.id}
+          id={video.id}
+          component={EpisodeFromJson}
+          durationInFrames={DURATION}
+          fps={FPS}
+          width={1920}
+          height={1080}
+          defaultProps={{ videoId: video.id, voEnabled: false }}
+        />
+      ))}
+      <Composition
+        id="EpisodeFromJson"
+        component={EpisodeFromJson}
+        durationInFrames={DURATION}
+        fps={FPS}
+        width={1920}
+        height={1080}
+        defaultProps={{ videoId: production.videos[0]?.id ?? "V01", voEnabled: false }}
+      />
     </>
-    <Composition
-      id="EpisodeFromJson"
-      component={EpisodeFromJson}
-      width={width}
-      height={height}
-      fps={defaultVideo.remotion_spec.fps}
-      durationInFrames={defaultVideo.remotion_spec.total_duration_frames}
-      defaultProps={{ videoId: defaultVideo.id }}
-    />
   );
 };

@@ -1,112 +1,49 @@
-import React, { useEffect, useMemo } from "react";
-import { AbsoluteFill, Audio, Sequence, useCurrentFrame } from "remotion";
-import { getVideoById, normalizeSceneType } from "./data/load-production";
+import React from "react";
+import { AbsoluteFill } from "remotion";
+import { production } from "./data/load-production";
+import type { EpisodeProps, Scene } from "./types";
+import { SceneFrame } from "./components/SceneFrame";
 import { TextOverlays } from "./components/TextOverlays";
-import type { BaseScene, DecisionPoint, EpisodeInputProps } from "./types";
-import { IntroAnimationScene } from "./scenes/IntroAnimationScene";
-import { TalkingExplanationScene } from "./scenes/TalkingExplanationScene";
-import { StoryScene } from "./scenes/StoryScene";
-import { RepoScreenCaptureScene } from "./scenes/RepoScreenCaptureScene";
-import { DiagramAnimationScene } from "./scenes/DiagramAnimationScene";
-import { DecisionOverlayScene } from "./scenes/DecisionOverlayScene";
-import { OutroScene } from "./scenes/OutroScene";
-import { resolveSceneVoice } from "./voice/voiceResolver";
-import { VoiceDebugPanel } from "./components/VoiceDebugPanel";
+import { IntroScene } from "./components/scenes/IntroScene";
+import { TalkingExplanationScene } from "./components/scenes/TalkingExplanationScene";
+import { StoryScene } from "./components/scenes/StoryScene";
+import { RepoScreenCaptureScene } from "./components/scenes/RepoScreenCaptureScene";
+import { DiagramAnimationScene } from "./components/scenes/DiagramAnimationScene";
+import { DecisionOverlayScene } from "./components/scenes/DecisionOverlayScene";
+import { OutroScene } from "./components/scenes/OutroScene";
 
-const SceneRenderer: React.FC<{ scene: BaseScene; decisionPoint: DecisionPoint }> = ({
-  scene,
-  decisionPoint,
-}) => {
-  const normalizedType = normalizeSceneType(scene.type);
-
-  switch (normalizedType) {
+const renderScene = (scene: Scene, videoId: string) => {
+  switch (scene.type) {
     case "intro_animation":
-      return <IntroAnimationScene description={scene.description} />;
+      return <IntroScene scene={scene} videoId={videoId} />;
     case "talking_explanation":
-      return <TalkingExplanationScene description={scene.description} />;
+      return <TalkingExplanationScene scene={scene} videoId={videoId} />;
     case "story_scene":
-      return <StoryScene description={scene.description} />;
+      return <StoryScene scene={scene} videoId={videoId} />;
     case "repo_screen_capture":
-      return <RepoScreenCaptureScene description={scene.description} />;
+      return <RepoScreenCaptureScene scene={scene} videoId={videoId} />;
     case "diagram_animation":
-      return <DiagramAnimationScene description={scene.description} />;
+      return <DiagramAnimationScene scene={scene} videoId={videoId} />;
     case "decision_overlay":
-      return <DecisionOverlayScene description={scene.description} decisionPoint={decisionPoint} />;
+      return <DecisionOverlayScene scene={scene} videoId={videoId} />;
     case "outro":
-      return <OutroScene description={scene.description} />;
-    default:
-      return (
-        <AbsoluteFill style={{ backgroundColor: "#000", color: "#fff" }}>
-          Unknown scene type
-        </AbsoluteFill>
-      );
+      return <OutroScene scene={scene} videoId={videoId} />;
   }
 };
 
-export const EpisodeFromJson: React.FC<EpisodeInputProps> = ({ videoId }) => {
-  const frame = useCurrentFrame();
-  const video = getVideoById(videoId);
-
-  const sceneVoiceMap = useMemo(() => {
-    if (!video) {
-      return new Map();
-    }
-
-    return new Map(
-      video.remotion_spec.scenes.map((scene, index) => [scene.id, resolveSceneVoice(video, scene, index)]),
-    );
-  }, [video]);
-
-  const activeScene = video?.remotion_spec.scenes.find(
-    (scene) => frame >= scene.start_frame && frame < scene.start_frame + scene.duration_frames,
-  );
-
-  const activeSceneVoice = activeScene ? sceneVoiceMap.get(activeScene.id) : null;
-
-  useEffect(() => {
-    if (!activeScene || !activeSceneVoice || process.env.NODE_ENV === "production") {
-      return;
-    }
-
-    console.info("[voice] scene-voice-state", {
-      moduleId: videoId,
-      sceneId: activeScene.id,
-      selectedVoice: activeSceneVoice.selectedVoiceId,
-      sourceUrl: activeSceneVoice.sourceUrl,
-      generationStatus: activeSceneVoice.generationStatus,
-      transcriptSegments: activeSceneVoice.transcriptSegments.length,
-      lastError: activeSceneVoice.lastError,
-    });
-  }, [activeScene, activeSceneVoice, videoId]);
-
-  if (!video) {
-    return (
-      <AbsoluteFill
-        style={{ backgroundColor: "#000", color: "#fff", justifyContent: "center", alignItems: "center" }}
-      >
-        Video not found for id: {videoId}
-      </AbsoluteFill>
-    );
-  }
+export const EpisodeFromJson: React.FC<EpisodeProps> = ({ videoId, voEnabled = false }) => {
+  const _voEnabled = voEnabled;
+  const video = production.videos.find((v) => v.id === videoId) ?? production.videos[0];
 
   return (
-    <AbsoluteFill style={{ backgroundColor: "#030712", fontFamily: "Inter, system-ui, sans-serif" }}>
-      {video.remotion_spec.scenes.map((scene) => {
-        const sceneVoice = sceneVoiceMap.get(scene.id);
-
-        return (
-          <Sequence key={scene.id} from={scene.start_frame} durationInFrames={scene.duration_frames}>
-            <AbsoluteFill>
-              <SceneRenderer scene={scene} decisionPoint={video.decision_point} />
-              <TextOverlays overlays={scene.text_overlays} />
-              {sceneVoice?.sourceUrl ? <Audio src={sceneVoice.sourceUrl} /> : null}
-            </AbsoluteFill>
-          </Sequence>
-        );
-      })}
-      {activeScene && activeSceneVoice ? (
-        <VoiceDebugPanel videoId={videoId} activeSceneId={activeScene.id} voice={activeSceneVoice} />
-      ) : null}
+    <AbsoluteFill style={{ backgroundColor: "#030712", color: "white", fontFamily: "Inter, sans-serif" }}>
+      {video.remotion_spec.scenes.map((scene) => (
+        <SceneFrame key={scene.id} scene={scene} videoId={videoId}>
+          {renderScene(scene, videoId)}
+          <TextOverlays overlays={scene.text_overlays ?? []} />
+          {_voEnabled ? null : null}
+        </SceneFrame>
+      ))}
     </AbsoluteFill>
   );
 };
