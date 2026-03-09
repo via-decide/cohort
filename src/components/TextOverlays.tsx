@@ -51,7 +51,6 @@ export const TextOverlays: React.FC<{ overlays: TextOverlay[] }> = ({ overlays }
               ...baseStyle,
               transform: `${basePosition.transform ?? ""} scale(${scale})`.trim(),
             }}
-            style={{ position: "absolute", left: 90, bottom: 120 - index * 56, opacity, transform: `scale(${scale})` }}
           >
             {overlay.text}
           </div>

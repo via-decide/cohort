@@ -10,14 +10,13 @@ export const BRANCH_COLORS: Record<string, string> = {
   V: "#f59e0b",
 };
 
-export const SceneFrame: React.FC<{
+interface SceneFrameProps {
   scene: Scene;
   videoId?: string;
   children: React.ReactNode;
-}> = ({ scene, videoId = "V01", children }) => {
-  videoId: string;
-  children: React.ReactNode;
-}> = ({ scene, videoId, children }) => {
+}
+
+export const SceneFrame: React.FC<SceneFrameProps> = ({ scene, videoId = "V01", children }) => {
   const frame = useCurrentFrame();
   const color = BRANCH_COLORS[videoId[0]] ?? "#f59e0b";
   const entrance = spring({ frame, fps: 30, config: { stiffness: 120, damping: 14 } });

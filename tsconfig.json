@@ -12,6 +12,6 @@
     "baseUrl": ".",
     "paths": { "@/*": ["src/*"] }
   },
-  "include": ["src/**/*", "render.ts", "voice-gen.ts"],
+  "include": ["src/**/*", "render.ts", "voice-gen.ts", "render-merge.ts", "scripts/**/*"],
   "exclude": ["node_modules", "dist"]
 }

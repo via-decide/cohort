@@ -12,8 +12,10 @@
     "voice:list": "ts-node --esm voice-gen.ts --list",
     "voice:force": "ts-node --esm voice-gen.ts --force --all",
     "capture": "node capture_jobs.js",
-    "validate": "ts-node --esm scripts/validate-production.ts"
-    "capture": "node capture_jobs.js"
+    "validate": "ts-node --esm scripts/validate-production.ts",
+    "merge:validate": "ts-node --esm scripts/validate-merge.ts",
+    "merge:render": "ts-node --esm render-merge.ts",
+    "merge:dry": "ts-node --esm render-merge.ts --dry-run"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.0",
