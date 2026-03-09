@@ -17,6 +17,7 @@
     "merge:render": "ts-node --esm render-merge.ts",
     "merge:dry": "ts-node --esm render-merge.ts --dry-run",
     "merge:check": "npm run merge:validate && npm run merge:dry && npm run voice:dry"
+    "merge:dry": "ts-node --esm render-merge.ts --dry-run"
   },
   "dependencies": {
     "@remotion/bundler": "^4.0.0",
