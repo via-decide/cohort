@@ -10,10 +10,8 @@
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"]
-    }
+    "paths": { "@/*": ["src/*"] }
   },
-  "include": ["src/**/*", "render.ts"],
+  "include": ["src/**/*", "render.ts", "voice-gen.ts"],
   "exclude": ["node_modules", "dist"]
 }
