@@ -12,6 +12,9 @@ export const BRANCH_COLORS: Record<string, string> = {
 
 export const SceneFrame: React.FC<{
   scene: Scene;
+  videoId?: string;
+  children: React.ReactNode;
+}> = ({ scene, videoId = "V01", children }) => {
   videoId: string;
   children: React.ReactNode;
 }> = ({ scene, videoId, children }) => {
@@ -30,6 +33,7 @@ export const SceneFrame: React.FC<{
           borderRadius: 24,
           padding: 48,
           boxSizing: "border-box",
+          background: "radial-gradient(circle at top right, #111827, #030712)",
         }}
       >
         {children}

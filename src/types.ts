@@ -21,6 +21,7 @@ export interface Scene {
   duration_frames: number;
   description?: string;
   text_overlays?: TextOverlay[];
+  transition?: string;
 }
 
 export interface DecisionOption {
@@ -30,6 +31,27 @@ export interface DecisionOption {
   leads_to: string;
 }
 
+export interface YoutubeMeta {
+  title: string;
+  description: string;
+  tags: string[];
+  thumbnail_concept?: string;
+}
+
+export interface VideoVisuals {
+  github_repos?: string[];
+}
+
+export interface VideoDefinition {
+  id: string;
+  title: string;
+  parent_id?: string | null;
+  branch_from_option?: string | null;
+  concept?: string;
+  repo_stage?: string;
+  notebookllm_prompt?: string;
+  youtube?: YoutubeMeta;
+  visuals?: VideoVisuals;
 export interface VideoDefinition {
   id: string;
   title: string;
@@ -62,5 +84,6 @@ export interface ProductionData {
 
 export interface EpisodeProps {
   videoId: string;
+  voEnabled?: boolean;
   voEnabled: boolean;
 }

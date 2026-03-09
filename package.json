@@ -11,6 +11,8 @@
     "voice:dry": "ts-node --esm voice-gen.ts --dry-run --all",
     "voice:list": "ts-node --esm voice-gen.ts --list",
     "voice:force": "ts-node --esm voice-gen.ts --force --all",
+    "capture": "node capture_jobs.js",
+    "validate": "ts-node --esm scripts/validate-production.ts"
     "capture": "node capture_jobs.js"
   },
   "dependencies": {

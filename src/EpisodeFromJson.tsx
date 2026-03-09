@@ -31,6 +31,8 @@ const renderScene = (scene: Scene, videoId: string) => {
   }
 };
 
+export const EpisodeFromJson: React.FC<EpisodeProps> = ({ videoId, voEnabled = false }) => {
+  const _voEnabled = voEnabled;
 export const EpisodeFromJson: React.FC<EpisodeProps> = ({ videoId }) => {
   const video = production.videos.find((v) => v.id === videoId) ?? production.videos[0];
 
@@ -40,6 +42,7 @@ export const EpisodeFromJson: React.FC<EpisodeProps> = ({ videoId }) => {
         <SceneFrame key={scene.id} scene={scene} videoId={videoId}>
           {renderScene(scene, videoId)}
           <TextOverlays overlays={scene.text_overlays ?? []} />
+          {_voEnabled ? null : null}
         </SceneFrame>
       ))}
     </AbsoluteFill>

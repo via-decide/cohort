@@ -1,6 +1,11 @@
 import React from "react";
 import { Composition } from "remotion";
 import { EpisodeFromJson } from "./EpisodeFromJson";
+import type { ProductionData } from "./types";
+
+const mode = (process.env.PRODUCTION_MODE ?? "v2").toLowerCase();
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const production = require(mode === "v1" ? "../production.json" : "../production-v2.json") as unknown as ProductionData;
 import type { EpisodeProps, ProductionData } from "./types";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -31,6 +36,7 @@ export const RemotionRoot: React.FC = () => {
         fps={FPS}
         width={1920}
         height={1080}
+        defaultProps={{ videoId: production.videos[0]?.id ?? "V01", voEnabled: false }}
         defaultProps={{ videoId: "V01", voEnabled: false }}
       />
     </>
