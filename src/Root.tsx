@@ -6,6 +6,10 @@ import type { ProductionData } from "./types";
 const mode = (process.env.PRODUCTION_MODE ?? "v2").toLowerCase();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const production = require(mode === "v1" ? "../production.json" : "../production-v2.json") as unknown as ProductionData;
+import type { EpisodeProps, ProductionData } from "./types";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const production = require("../production-v2.json") as unknown as ProductionData;
 
 const FPS = production.series.fps;
 const DURATION = production.series.frames_per_video;
@@ -33,6 +37,7 @@ export const RemotionRoot: React.FC = () => {
         width={1920}
         height={1080}
         defaultProps={{ videoId: production.videos[0]?.id ?? "V01", voEnabled: false }}
+        defaultProps={{ videoId: "V01", voEnabled: false }}
       />
     </>
   );

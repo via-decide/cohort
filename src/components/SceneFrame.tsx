@@ -15,6 +15,9 @@ export const SceneFrame: React.FC<{
   videoId?: string;
   children: React.ReactNode;
 }> = ({ scene, videoId = "V01", children }) => {
+  videoId: string;
+  children: React.ReactNode;
+}> = ({ scene, videoId, children }) => {
   const frame = useCurrentFrame();
   const color = BRANCH_COLORS[videoId[0]] ?? "#f59e0b";
   const entrance = spring({ frame, fps: 30, config: { stiffness: 120, damping: 14 } });

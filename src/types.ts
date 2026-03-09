@@ -52,6 +52,9 @@ export interface VideoDefinition {
   notebookllm_prompt?: string;
   youtube?: YoutubeMeta;
   visuals?: VideoVisuals;
+export interface VideoDefinition {
+  id: string;
+  title: string;
   full_script?: Record<string, string>;
   creator_script?: Record<string, string>;
   decision_point?: {
@@ -82,4 +85,5 @@ export interface ProductionData {
 export interface EpisodeProps {
   videoId: string;
   voEnabled?: boolean;
+  voEnabled: boolean;
 }
