@@ -65,6 +65,10 @@ const screenshotWithRetry = async (page, job, retries = 2) => {
     } catch (error) {
       attempt += 1;
 
+      if (attempt <= retries) {
+        await sleep(1500 * attempt);
+      }
+
       if (attempt > retries) {
         return {
           ok: false,

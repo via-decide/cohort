@@ -28,6 +28,7 @@ const scriptByIndex = (video: VideoDefinition): string[] => {
     return [];
   }
 
+  return [script.hook, script.context, script.repo_explanation, script.decision_moment, script.options_narration, script.outro].filter(
   return [script.hook, script.context, script.repo_explanation, script.decision_moment, script.outro].filter(
     (value): value is string => Boolean(value),
   );

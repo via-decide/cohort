@@ -28,6 +28,19 @@ for (const [sourceId, branches] of Object.entries(production.branching_map.edges
 }
 
 for (const video of production.videos) {
+  const edges = production.branching_map.edges[video.id];
+  if (!edges || edges === "TERMINAL") continue;
+  for (const option of video.decision_point.options) {
+    const mapTarget = (edges as Record<string, string>)[option.id];
+    if (mapTarget !== option.leads_to) {
+      failures.push(
+        `leads_to mismatch for ${video.id} option ${option.id}: decision_point says "${option.leads_to}", branching_map says "${mapTarget}"`,
+      );
+    }
+  }
+}
+
+for (const video of production.videos) {
   const spec = video.remotion_spec;
   const expectedFrames = spec.fps * spec.duration_seconds;
   if (spec.total_duration_frames !== expectedFrames) {
@@ -41,6 +54,16 @@ for (const video of production.videos) {
     failures.push(
       `Scene sum mismatch for ${video.id}: sum=${sceneFrameSum}, total_duration_frames=${spec.total_duration_frames}`,
     );
+  }
+
+  let expectedStart = 0;
+  for (const scene of spec.scenes) {
+    if (scene.start_frame !== expectedStart) {
+      failures.push(
+        `Scene gap/overlap in ${video.id}: ${scene.id} starts at ${scene.start_frame}, expected ${expectedStart}`,
+      );
+    }
+    expectedStart += scene.duration_frames;
   }
 }
 
