@@ -89,3 +89,12 @@ Checks:
 - If no scene-level audio source exists yet, the resolver falls back to transcript segments from `full_script` fields for deterministic debugging.
 - Dev-only Voice Debug Panel appears in Remotion Studio and shows selected voice, source URL, generation status, playback status, transcript segment count, scene id, and latest response/error.
 - No environment variables are currently required by this repo.
+
+## Merge quick check
+
+```bash
+npm run merge:check
+```
+
+Runs merge validation, merge dry-run table, and voice dry-run in one command.
+
