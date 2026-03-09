@@ -3,22 +3,27 @@ import { Composition } from "remotion";
 import { EpisodeFromJson } from "./EpisodeFromJson";
 import { getProduction } from "./data/load-production";
 import { parseResolution } from "./utils/resolution";
-import type { EpisodeInputProps } from "./types";
 
 const production = getProduction();
-const defaultVideo = production.videos[0];
-const { width, height } = parseResolution(defaultVideo.remotion_spec.resolution);
 
 export const RemotionRoot: React.FC = () => {
   return (
-    <Composition<EpisodeInputProps>
-      id="EpisodeFromJson"
-      component={EpisodeFromJson}
-      width={width}
-      height={height}
-      fps={defaultVideo.remotion_spec.fps}
-      durationInFrames={defaultVideo.remotion_spec.total_duration_frames}
-      defaultProps={{ videoId: defaultVideo.id }}
-    />
+    <>
+      {production.videos.map((video) => {
+        const { width, height } = parseResolution(video.remotion_spec.resolution);
+        return (
+          <Composition
+            key={video.id}
+            id={video.id}
+            component={EpisodeFromJson}
+            width={width}
+            height={height}
+            fps={video.remotion_spec.fps}
+            durationInFrames={video.remotion_spec.total_duration_frames}
+            defaultProps={{ videoId: video.id }}
+          />
+        );
+      })}
+    </>
   );
 };
