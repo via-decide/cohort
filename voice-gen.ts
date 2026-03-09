@@ -6,7 +6,6 @@ import type { ProductionData, VideoDefinition } from "./src/types";
 const mode = (process.env.PRODUCTION_MODE ?? "v2").toLowerCase();
 const sourceFile = mode === "v1" ? "production.json" : "production-v2.json";
 const production = JSON.parse(fs.readFileSync(path.join(process.cwd(), sourceFile), "utf8")) as ProductionData;
-const production = JSON.parse(fs.readFileSync(path.join(process.cwd(), "production-v2.json"), "utf8")) as ProductionData;
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
 const force = args.includes("--force");
@@ -24,13 +23,17 @@ const voiceDir = path.join(process.cwd(), "public", "voice");
 fs.mkdirSync(voiceDir, { recursive: true });
 
 const timingsPath = path.join(voiceDir, "timings.json");
-const existing = fs.existsSync(timingsPath) ? JSON.parse(fs.readFileSync(timingsPath, "utf8")) : {};
+let existing: { entries?: unknown; flat?: unknown } = {};
+if (fs.existsSync(timingsPath)) {
+  try {
+    existing = JSON.parse(fs.readFileSync(timingsPath, "utf8")) as { entries?: unknown; flat?: unknown };
+  } catch {
+    existing = {};
+  }
+}
 const entries: Array<{ videoId: string; sceneId: string; durationSec: number; durationFrames: number; file: string }> =
   Array.isArray(existing.entries) ? existing.entries : [];
 const flat: Record<string, number> = typeof existing.flat === "object" && existing.flat ? existing.flat : {};
-const timings: Record<string, number> = fs.existsSync(timingsPath)
-  ? JSON.parse(fs.readFileSync(timingsPath, "utf8"))
-  : {};
 
 const sceneText = (video: VideoDefinition, sceneId: string): string => {
   const script = video.full_script ?? video.creator_script ?? {};
@@ -38,7 +41,6 @@ const sceneText = (video: VideoDefinition, sceneId: string): string => {
     S01_INTRO: script.hook ?? "",
     S02_HOOK: [script.hook, script.context].filter(Boolean).join(" "),
     S03_STORY: script.context ?? script.story ?? "",
-    S03_STORY: script.context ?? "",
     S04_REPO: script.repo_explanation ?? script.story ?? "",
     S05_DIAGRAM: script.decision_moment ?? "",
     S06_DECISION: script.options_narration ?? script.decision_question ?? "",
@@ -52,7 +54,6 @@ for (const video of selected) {
     const key = `${video.id}_${scene.id}`;
     const fileName = `${key}.wav`;
     const output = path.join(voiceDir, fileName);
-    const output = path.join(voiceDir, `${key}.wav`);
 
     if (!force && fs.existsSync(output)) {
       continue;
@@ -88,18 +89,3 @@ const payload = {
 };
 
 fs.writeFileSync(timingsPath, JSON.stringify(payload, null, 2));
-
-    if (dryRun) {
-      fs.writeFileSync(output, "");
-      timings[key] = Math.max(1, Math.round(text.split(/\s+/).length / 3));
-      continue;
-    }
-
-    execFileSync("edge-tts", ["--voice", "en-IN-PrabhatNeural", "--text", text, "--write-media", output], {
-      stdio: "inherit",
-    });
-    timings[key] = Math.max(1, Math.round(text.split(/\s+/).length / 3));
-  }
-}
-
-fs.writeFileSync(timingsPath, JSON.stringify(timings, null, 2));
