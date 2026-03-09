@@ -25,5 +25,14 @@ export const RemotionRoot: React.FC = () => {
         );
       })}
     </>
+    <Composition
+      id="EpisodeFromJson"
+      component={EpisodeFromJson}
+      width={width}
+      height={height}
+      fps={defaultVideo.remotion_spec.fps}
+      durationInFrames={defaultVideo.remotion_spec.total_duration_frames}
+      defaultProps={{ videoId: defaultVideo.id }}
+    />
   );
 };
