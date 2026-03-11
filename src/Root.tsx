@@ -1,10 +1,10 @@
 import React from "react";
 import { Composition } from "remotion";
+import config from "../data/config.json";
 import { EpisodeFromJson } from "./EpisodeFromJson";
-import { MergeComposition } from "./MergeComposition.js";
-import { loadMergeManifest } from "./data/load-merge.js";
+import { PythagoreanProofMain } from "./PythagoreanProof/Main";
 import type { EpisodeProps, ProductionData } from "./types";
-import type { MergeProps } from "./types-merge.js";
+import type { MergeProps } from "./types-merge";
 
 const mode = (process.env.PRODUCTION_MODE ?? "v2").toLowerCase();
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -13,11 +13,24 @@ const production = require(mode === "v1" ? "../production.json" : "../production
 const FPS = production.series.fps;
 const DURATION = production.series.frames_per_video;
 
+type MergeCompositionType = React.ComponentType<MergeProps>;
+
+let MergeCompositionComponent: MergeCompositionType | null = null;
 let mergeManifest: MergeProps["manifest"] | null = null;
-try {
-  mergeManifest = loadMergeManifest();
-} catch {
-  mergeManifest = null;
+
+if (typeof window === "undefined") {
+  try {
+    // Load merge modules only in the Node render environment.
+    const dynamicRequire = (0, eval)("require") as NodeRequire;
+    const { MergeComposition } = dynamicRequire("./MergeComposition");
+    const { loadMergeManifest } = dynamicRequire("./data/load-merge");
+
+    MergeCompositionComponent = MergeComposition as MergeCompositionType;
+    mergeManifest = loadMergeManifest() as MergeProps["manifest"];
+  } catch {
+    MergeCompositionComponent = null;
+    mergeManifest = null;
+  }
 }
 
 export const RemotionRoot: React.FC = () => {
@@ -44,10 +57,18 @@ export const RemotionRoot: React.FC = () => {
         height={1080}
         defaultProps={{ videoId: production.videos[0]?.id ?? "V01", voEnabled: false } as EpisodeProps}
       />
-      {mergeManifest ? (
+      <Composition
+        id="PythagoreanVisualProof"
+        component={PythagoreanProofMain}
+        durationInFrames={config.video.durationInFrames}
+        fps={config.video.fps}
+        width={config.video.width}
+        height={config.video.height}
+      />
+      {mergeManifest && MergeCompositionComponent ? (
         <Composition
           id="MergeComposition"
-          component={MergeComposition}
+          component={MergeCompositionComponent}
           durationInFrames={
             mergeManifest.timeline.durationMs == null
               ? mergeManifest.output.fps * 30
