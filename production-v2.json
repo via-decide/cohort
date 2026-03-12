@@ -2907,6 +2907,184 @@
       }
     }
   ],
+  "math_data": [
+    {
+      "reelId": "V11",
+      "title": "Pythagoras — visual proof via square areas",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "triangle",
+            "d": "M220 1220 L860 1220 L220 700 Z",
+            "strokeWidth": 10,
+            "color": "rust"
+          },
+          {
+            "id": "square-a",
+            "d": "M220 1220 L220 860 L580 860 L580 1220 Z",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "square-b",
+            "d": "M580 1220 L860 1220 L860 940 L580 940 Z",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "square-c",
+            "d": "M220 700 L620 700 L620 300 L220 300 Z",
+            "strokeWidth": 8,
+            "color": "rust"
+          }
+        ]
+      },
+      "caption": "Watch a right triangle prove itself: a² + b² = c² by area transfer. #Pythagoras #Geometry #MathReels #VisualProof #GeoGebra"
+    },
+    {
+      "reelId": "V12",
+      "title": "Unit circle animation — Trigonometry",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "circle",
+            "d": "M540 560 m -300,0 a 300,300 0 1,0 600,0 a 300,300 0 1,0 -600,0",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "x-axis",
+            "d": "M200 560 L880 560",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "y-axis",
+            "d": "M540 220 L540 900",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "radius",
+            "d": "M540 560 L780 360",
+            "strokeWidth": 9,
+            "color": "gold"
+          },
+          {
+            "id": "sine-drop",
+            "d": "M780 360 L780 560",
+            "strokeWidth": 7,
+            "color": "rust"
+          }
+        ]
+      },
+      "caption": "See sine and cosine emerge from one rotating radius on the unit circle. #Trigonometry #UnitCircle #MathAnimation #STEM #GeoGebra"
+    },
+    {
+      "reelId": "V13",
+      "title": "Calculus — Area under a curve (integration)",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "axes",
+            "d": "M180 1280 L920 1280 M180 1280 L180 420",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "curve",
+            "d": "M180 1180 C320 960 430 760 560 720 C700 680 810 820 920 1030",
+            "strokeWidth": 9,
+            "color": "gold"
+          },
+          {
+            "id": "bounds",
+            "d": "M320 1280 L320 960 M760 1280 L760 830",
+            "strokeWidth": 7,
+            "color": "rust"
+          },
+          {
+            "id": "area-outline",
+            "d": "M320 1280 L320 960 C420 820 540 730 660 760 C710 775 735 790 760 830 L760 1280 Z",
+            "strokeWidth": 8,
+            "color": "gold"
+          }
+        ]
+      },
+      "caption": "Integration made visual: build accumulated area under a smooth function. #Calculus #Integration #AreaUnderCurve #MathReels #GeoGebra"
+    },
+    {
+      "reelId": "V14",
+      "title": "Fractal geometry — Branch animation",
+      "config": {
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "durationInFrames": 450,
+        "narrator": "en-US-GuyNeural"
+      },
+      "svgData": {
+        "viewBox": "0 0 1080 1920",
+        "paths": [
+          {
+            "id": "trunk",
+            "d": "M540 1540 L540 1140",
+            "strokeWidth": 10,
+            "color": "rust"
+          },
+          {
+            "id": "branch-l1-left",
+            "d": "M540 1240 L420 1020",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "branch-l1-right",
+            "d": "M540 1240 L660 1020",
+            "strokeWidth": 8,
+            "color": "gold"
+          },
+          {
+            "id": "branch-l2-left",
+            "d": "M420 1020 L330 860 M420 1020 L480 850",
+            "strokeWidth": 6,
+            "color": "rust"
+          },
+          {
+            "id": "branch-l2-right",
+            "d": "M660 1020 L600 850 M660 1020 L750 860",
+            "strokeWidth": 6,
+            "color": "rust"
+          }
+        ]
+      },
+      "caption": "A recursive tree grows branch by branch: geometry repeating itself at every scale. #Fractal #Geometry #RecursiveArt #MathAnimation #GeoGebra"
+    }
+  ],
   "branching_map": {
     "description": "Canonical graph. Every leads_to value must match a key in this map or equal SERIES2_V01 (terminal). All 10 videos are nodes. No dangling edges.",
     "nodes": [
