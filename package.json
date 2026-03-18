@@ -13,9 +13,13 @@
     "voice:force": "ts-node --esm voice-gen.ts --force --all",
     "capture": "node capture_jobs.js",
     "validate": "ts-node --esm studio.ts validate",
-    "merge:validate": "ts-node --esm scripts/validate-merge.ts",
-    "merge:render": "ts-node --esm render-merge.ts",
-    "merge:dry": "ts-node --esm render-merge.ts --dry-run",
+    "info": "ts-node --esm studio.ts info",
+    "dry": "ts-node --esm studio.ts dry",
+    "trim": "ts-node --esm studio.ts trim",
+    "merge": "ts-node --esm studio.ts merge",
+    "merge:validate": "ts-node --esm studio.ts validate",
+    "merge:render": "ts-node --esm studio.ts merge",
+    "merge:dry": "ts-node --esm studio.ts dry",
     "studio:validate": "ts-node --esm studio.ts validate"
   },
   "dependencies": {

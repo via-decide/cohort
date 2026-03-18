@@ -9,9 +9,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": { "@/*": ["src/*"] }
   },
-  "include": ["src/**/*", "render.ts", "voice-gen.ts", "render-merge.ts", "scripts/**/*"],
+  "include": ["src/**/*", "render.ts", "voice-gen.ts", "render-merge.ts", "scripts/**/*", "studio.ts"],
   "exclude": ["node_modules", "dist"]
 }
