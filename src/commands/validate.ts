@@ -1,17 +1,13 @@
-import { spawnSync } from "node:child_process";
+import { getCanonicalAudio, loadManifest } from "../load.ts";
 
-const run = (label: string, command: string, args: string[]) => {
-  const result = spawnSync(command, args, {
-    stdio: "inherit",
-    env: process.env,
-  });
+export const runValidateCommand = async (manifestPath?: string): Promise<void> => {
+  const manifest = loadManifest(manifestPath);
+  const canonicalAudio = getCanonicalAudio(manifest);
 
-  if (result.status !== 0) {
-    throw new Error(`${label} failed with exit code ${result.status ?? "unknown"}`);
-  }
-};
-
-export const runValidateCommand = async (): Promise<void> => {
-  run("production validation", "node", ["--loader", "ts-node/esm", "scripts/validate-production.ts"]);
-  run("merge validation", "npm", ["run", "merge:validate"]);
+  console.log(`Manifest valid: ${manifest.production?.title ?? manifest.production?.id ?? manifest.version}`);
+  console.log(`Videos: ${manifest.inputs.videos.length}`);
+  console.log(`Audios: ${manifest.inputs.audios.length}`);
+  console.log(`Canonical audio: ${canonicalAudio.id}`);
+  console.log(`Primary audio: ${manifest.sync.primaryAudioId}`);
+  console.log(`Output: ${manifest.output.path}`);
 };
